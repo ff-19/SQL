@@ -1,0 +1,117 @@
+-- Create tables with suitable constraints
+
+  
+ create table cust_master(cust_no varchar(20) PRIMARY KEY, 
+    cust_name varchar(20) NOT NULL, 
+    cust_addr varchar(20) NOT NULL); 
+  
+create table orders(order_no INT PRIMARY KEY, 
+    cust_no varchar(20) NOT NULL, 
+    order_date  date NOT NULL, 
+    qty_ordered INT NOT NULL, 
+    FOREIGN KEY (cust_no) REFERENCES cust_master (cust_no) ON DELETE 
+CASCADE); 
+  
+ create table product(producy_no INT PRIMARY KEY, 
+    product_name varchar(20) NOT NULL, 
+    order_no INT NOT NULL, 
+    FOREIGN KEY (order_no) REFERENCES orders (order_no) ON DELETE 
+CASCADE);
+
+
+-- Insert records
+
+     INSERT INTO orders (order_no, cust_no, order_date, qty_ordered)
+     VALUES (1, 'c1003', '2023-11-11', 2);
+
+
+     INSERT INTO orders (order_no, cust_no, order_date, qty_ordered)
+     VALUES (3, 'c1005', '2023-11-12', 1);
+
+
+     INSERT INTO orders (order_no, cust_no, order_date, qty_ordered)
+     VALUES (4, 'c1006', '2023-11-12', 3);
+
+
+     INSERT INTO orders (order_no, cust_no, order_date, qty_ordered)
+     VALUES (5, 'c1007', '2023-11-12', 4);
+
+
+     INSERT INTO orders (order_no, cust_no, order_date, qty_ordered)
+     VALUES (6, 'c1008', '2023-11-15', 2);
+
+
+     INSERT INTO orders (order_no, cust_no, order_date, qty_ordered)
+     VALUES (7, 'c1009', '2023-11-15', 2);
+
+
+     insert into cust_master values('c1002','onkar','barshi'); 
+insert into cust_master values('c1003','ritesh','mumbai'); 
+insert into cust_master values('c1004','jayesh','pune'); 
+insert into cust_master values('c1005','suyash','dharashiv'); 
+insert into cust_master values('c1006','sushant','manglore'); 
+insert into cust_master values('c1007','kaushal','pune'); 
+insert into cust_master values('c1008','shingote','manglore'); 
+insert into cust_master values('c1009','aditya','banglore'); 
+
+     
+
+-- Queries
+
+1. List names of customers having 'A' as second letter in their  
+name. -> select * from cust_master 
+where substring(cust_name,2,1)='A';
+
+ 
+2. Display order from Customer no C1002,C1005,C1007 and C1008 -> 
+select * from orders where cust_no IN ('c1002','c1005','c1007','c1008');
+
+ ->select order_no,cust_no from orders where cust_no IN 
+('c1002','c1005','c1007','c1008'); 
+
+->select orders.order_no,orders.cust_no,product.product_name from orders,product  
+where orders.order_no=product.order_no and  cust_no IN 
+('c1002','c1005','c1007','c1008'); 
+
+
+3. List Clients who stay in either 'Banglore or 'Manglore' ->select cust_name,cust_addr from cust_master where cust_addr IN 
+('banglore','manglore'); 
+
+
+4. Display name of customers& the product_name they have purchase ->select cm.cust_name,p.product_name 
+from  cust_master cm 
+INNER JOIN orders o ON cm.cust_no=o.cust_no 
+JOIN product p ON o.order_no=p.order_no; 
+
+
+5. Create view View1 consisting of Cust_name, Product_name. -> create view view1 as 
+select cm.cust_name,p.product_name 
+from  cust_master cm 
+INNER JOIN orders o ON cm.cust_no=o.cust_no 
+JOIN product p ON o.order_no=p.order_no; 
+
+
+6. Disply product_name and quantity purchase by each customer ->select cm.cust_name,p.product_name,o.qty_ordered 
+from  cust_master cm 
+INNER JOIN orders o ON cm.cust_no=o.cust_no 
+JOIN product p ON o.order_no=p.order_no; 
+
+
+7. Perform different joint operation. 
+  
+    i]INNER JOIN 
+  
+        select * 
+        from cust_master cm 
+        INNER JOIN orders o ON cm.cust_no=o.cust_no; 
+    ii] LEFT JOIN 
+  
+        select * 
+        from  cust_master cm 
+        LEFT JOIN orders o ON cm.cust_no=o.cust_no; 
+  
+    iii] RIGHT JOIN  
+  
+        select * 
+        from  cust_master cm 
+        RIGHT JOIN orders o ON cm.cust_no=o.cust_no;

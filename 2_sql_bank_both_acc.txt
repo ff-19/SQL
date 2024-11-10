@@ -1,0 +1,108 @@
+-- Create tables with appropriate constraints
+
+CREATE TABLE Account (
+  acc_no INT,
+  branch_name VARCHAR(255),
+  balance INT,
+  PRIMARY KEY (acc_no)
+);
+
+CREATE TABLE Branch (
+  branch_name VARCHAR(255),
+  branch_city VARCHAR(255),
+  assets INT,
+  PRIMARY KEY (branch_name)
+);
+
+CREATE TABLE Customer (
+  cust_name VARCHAR(255),
+  cust_street VARCHAR(255),
+  cust_city VARCHAR(255),
+  PRIMARY KEY (cust_name)
+);
+
+CREATE TABLE Depositor (
+  cust_name VARCHAR(255),
+  acc_no INT
+);
+
+CREATE TABLE Loan (
+  loan_no INT,
+  branch_name VARCHAR(255),
+  amount INT,
+  PRIMARY KEY (loan_no)
+);
+
+CREATE TABLE Borrower (
+  cust_name VARCHAR(255),
+  loan_no INT
+);
+ALTER TABLE Account ADD FOREIGN KEY (branch_name) REFERENCES Branch (branch_name);
+ALTER TABLE Depositor ADD FOREIGN KEY (cust_name) REFERENCES Customer (cust_name);
+ALTER TABLE Depositor ADD FOREIGN KEY (acc_no) REFERENCES Account (acc_no);
+ALTER TABLE Loan ADD FOREIGN KEY (branch_name) REFERENCES Branch (branch_name);
+ALTER TABLE Borrower ADD FOREIGN KEY (cust_name) REFERENCES Customer (cust_name);
+ALTER TABLE Borrower ADD FOREIGN KEY (loan_no) REFERENCES Loan (loan_no);
+
+INSERT INTO Branch (branch_name, branch_city, assets) VALUES
+('Wadia college', 'Pune', 5000000),
+('Nigdi', 'Pune', 3000000),
+('Kharadi', 'Pune', 4000000),
+('Hadapsar', 'Pune', 3500000),
+('Viman Nagar', 'Pune', 4500000);
+
+INSERT INTO Account (acc_no, branch_name, balance) VALUES
+(101, 'Wadia college', 15000),
+(102, 'Nigdi', 8000),
+(103, 'Kharadi', 20000),
+(104, 'Hadapsar', 12000),
+(105, 'Viman Nagar', 5000);
+
+INSERT INTO Customer (cust_name, cust_street, cust_city) VALUES
+('Sai', 'Street 1', 'Pune'),
+('Yash', 'Street 2', 'Pune'),
+('Ravi', 'Street 3', 'Pune'),
+('Sham', 'Street 4', 'Pune'),
+('Prachi', 'Street 5', 'Pune');
+
+INSERT INTO Depositor (cust_name, acc_no) VALUES
+('Sai', 101),
+('Yash', 102),
+('Ravi', 103),
+('Sham', 101),
+('Prachi', 104);
+
+INSERT INTO Loan (loan_no, branch_name, amount) VALUES
+(201, 'Wadia college', 15000),
+(202, 'Nigdi', 13000),
+(203, 'Kharadi', 25000),
+(204, 'Hadapsar', 18000),
+(205, 'Wadia college', 1400);
+
+INSERT INTO Borrower (cust_name, loan_no) VALUES
+('Sai', 202),
+('Yash', 203),
+('Prachi', 205);
+
+
+-- Queries
+
+-- 1. Find all customers who have both account and loan at the bank.
+SELECT cust_name FROM Depositor INTERSECT SELECT cust_name FROM Borrower;
+
+
+-- 2. Find all customers who have an account or loan or both at the bank.
+SELECT cust_name FROM Depositor UNION SELECT cust_name FROM Borrower;
+
+
+-- 3. Find all customers who have an account but no loan at the bank.
+SELECT cust_name FROM Depositor WHERE cust_name NOT IN (SELECT cust_name FROM Borrower);
+
+-- 4. Find average account balance at 'Wadia College' branch.
+SELECT AVG(balance) AS avg_balance
+FROM Account
+WHERE branch_name = 'Wadia College';
+
+-- 5. Find the number of depositors at each branch.
+SELECT branch_name, COUNT(*) FROM Account INNER JOIN Depositor ON Account.acc_no = Depositor.acc_no GROUP BY branch_name;
+
